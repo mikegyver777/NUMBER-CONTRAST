@@ -1,0 +1,1481 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kyla's Number Adventure! 🌟</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard', 'Marker Felt', cursive;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+
+        /* Animated backgrounds */
+        .bg-animals { background: linear-gradient(180deg, #87CEEB 0%, #98FB98 70%, #90EE90 100%); }
+        .bg-space { background: linear-gradient(180deg, #0a0a2e 0%, #1a1a4e 50%, #2d1b69 100%); }
+        .bg-ocean { background: linear-gradient(180deg, #87CEEB 0%, #00CED1 30%, #006994 100%); }
+        .bg-candy { background: linear-gradient(180deg, #FFB6C1 0%, #DDA0DD 50%, #FF69B4 100%); }
+        .bg-city { background: linear-gradient(180deg, #FF7F50 0%, #FFD700 30%, #87CEEB 100%); }
+        .bg-dinosaur { background: linear-gradient(180deg, #8B4513 0%, #228B22 50%, #90EE90 100%); }
+        .bg-food { background: linear-gradient(180deg, #FFEFD5 0%, #FFE4B5 50%, #FFDAB9 100%); }
+        .bg-vehicles { background: linear-gradient(180deg, #87CEEB 0%, #B0C4DE 50%, #708090 100%); }
+
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 2em;
+            color: white;
+            text-shadow: 4px 4px 0 #333, -2px -2px 0 #333, 2px -2px 0 #333, -2px 2px 0 #333;
+            animation: bounce 1s ease infinite;
+            display: inline-block;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .score-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .score-item {
+            background: rgba(255,255,255,0.9);
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 1em;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 3px solid #FFD700;
+        }
+
+        .streak-fire {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: white;
+            animation: pulse 0.5s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Level progress bar */
+        .level-progress-container {
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            border: 4px solid #9C27B0;
+        }
+
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .current-level {
+            font-size: 1.3em;
+            color: #9C27B0;
+            font-weight: bold;
+        }
+
+        .progress-text {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .progress-bar-bg {
+            background: #e0e0e0;
+            border-radius: 15px;
+            height: 25px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #4CAF50, #8BC34A, #CDDC39);
+            height: 100%;
+            border-radius: 15px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-bar-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            line-height: 25px;
+            font-size: 0.9em;
+        }
+
+        /* Level selector */
+        .level-selector {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .level-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid #ddd;
+            background: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .level-btn.completed {
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            color: white;
+            border-color: #388E3C;
+        }
+
+        .level-btn.current {
+            background: linear-gradient(135deg, #9C27B0, #E91E63);
+            color: white;
+            border-color: #7B1FA2;
+            animation: pulse 1s ease infinite;
+        }
+
+        .level-btn.locked {
+            background: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .level-btn:not(.locked):hover {
+            transform: scale(1.15);
+        }
+
+        /* Theme banner */
+        .theme-banner {
+            background: white;
+            border-radius: 25px;
+            padding: 15px 25px;
+            margin: 15px 0;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            border: 5px solid #FFD700;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .theme-text {
+            font-size: 1.6em;
+            color: #333;
+            position: relative;
+            z-index: 1;
+        }
+
+        .instruction-text {
+            font-size: 1em;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        /* Visual display area */
+        .visual-area {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .visual-card {
+            flex: 1;
+            min-width: 260px;
+            max-width: 380px;
+            background: white;
+            border-radius: 25px;
+            padding: 15px;
+            border: 5px solid #ddd;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .visual-card.highlight-correct {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+        }
+
+        .card-visual {
+            min-height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .big-emoji {
+            font-size: 3.5em;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        /* Height visual */
+        .height-visual {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 110px;
+        }
+
+        .height-bar {
+            width: 70px;
+            background: linear-gradient(180deg, #FFD700, #FFA500);
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 8px;
+            font-size: 2.2em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Distance visual */
+        .distance-visual {
+            position: relative;
+            height: 100px;
+            width: 100%;
+        }
+
+        .distance-path {
+            position: absolute;
+            bottom: 25px;
+            left: 10%;
+            height: 8px;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A, #CDDC39, #FFC107, #FF9800);
+            border-radius: 4px;
+        }
+
+        .distance-start {
+            position: absolute;
+            bottom: 5px;
+            left: 5%;
+            font-size: 1.8em;
+        }
+
+        .distance-end {
+            position: absolute;
+            bottom: 40px;
+            font-size: 2.2em;
+        }
+
+        /* Stack visual */
+        .stack-visual {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2px;
+            max-height: 110px;
+            overflow: hidden;
+        }
+
+        .stack-item {
+            font-size: 1.1em;
+            animation: pop 0.3s ease backwards;
+        }
+
+        @keyframes pop {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .more-indicator {
+            width: 100%;
+            text-align: center;
+            font-size: 1em;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Number display */
+        .number-display {
+            margin-top: 8px;
+        }
+
+        .big-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .number-label {
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        /* ANSWER SECTION */
+        .answer-section {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            border: 5px solid #9C27B0;
+        }
+
+        .answer-prompt {
+            text-align: center;
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .answer-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .answer-input {
+            width: 100px;
+            padding: 12px;
+            font-size: 1.6em;
+            font-family: inherit;
+            text-align: center;
+            border: 4px solid #ddd;
+            border-radius: 15px;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #9C27B0;
+            background: white;
+            box-shadow: 0 0 15px rgba(156, 39, 176, 0.3);
+        }
+
+        .answer-input.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .answer-input.wrong {
+            border-color: #f44336;
+            background: #ffebee;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .answer-dropdown {
+            padding: 12px 15px;
+            font-size: 1.1em;
+            font-family: inherit;
+            border: 4px solid #FFD700;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.3s ease;
+            min-width: 160px;
+        }
+
+        .answer-dropdown:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .answer-dropdown.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .answer-dropdown.wrong {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        /* Submit button */
+        .submit-btn {
+            display: block;
+            margin: 20px auto 0;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            font-family: inherit;
+            font-weight: bold;
+            border: none;
+            border-radius: 40px;
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            transition: all 0.3s ease;
+            border: 4px solid #388E3C;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.08);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            border-color: #999;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Feedback area */
+        .feedback-area {
+            text-align: center;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .feedback-area.show {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .feedback-area.success {
+            background: linear-gradient(135deg, #a8e063, #56ab2f);
+        }
+
+        .feedback-area.fail {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+        }
+
+        .feedback-emoji {
+            font-size: 3em;
+        }
+
+        .feedback-text {
+            font-size: 1.5em;
+            color: white;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+            margin: 8px 0;
+        }
+
+        .feedback-detail {
+            font-size: 1.1em;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .correct-answer {
+            background: rgba(255,255,255,0.3);
+            padding: 8px 15px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 1.1em;
+            color: white;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            font-family: inherit;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: 3px solid #5a67d8;
+        }
+
+        .btn-next:hover {
+            transform: scale(1.08);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: white;
+            border: 3px solid #e55a4e;
+        }
+
+        .btn-reset:hover {
+            transform: scale(1.08);
+        }
+
+        /* ========== LEVEL COMPLETE OVERLAY ========== */
+        .level-complete-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .level-complete-overlay.show {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .level-complete-card {
+            background: white;
+            border-radius: 40px;
+            padding: 40px 50px;
+            text-align: center;
+            max-width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 8px solid #FFD700;
+            animation: popIn 0.6s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .level-complete-stars {
+            font-size: 4em;
+            margin-bottom: 15px;
+            animation: starSpin 1s ease;
+        }
+
+        @keyframes starSpin {
+            0% { transform: rotate(-180deg) scale(0); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        .level-complete-message {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #FF6B6B, #FFD700, #4CAF50, #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .level-complete-sub {
+            font-size: 1.4em;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .level-complete-btn {
+            padding: 18px 50px;
+            font-size: 1.5em;
+            font-family: inherit;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+            transition: all 0.3s ease;
+            border: 4px solid #388E3C;
+        }
+
+        .level-complete-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Celebration */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2001;
+        }
+
+        .confetti {
+            position: absolute;
+            font-size: 2.5em;
+            animation: confettiFall 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-100px) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg) scale(0.5); opacity: 0; }
+        }
+
+        /* Floating decorations */
+        .floating-deco {
+            position: fixed;
+            font-size: 2.5em;
+            opacity: 0.3;
+            pointer-events: none;
+            animation: floatAround 20s ease-in-out infinite;
+        }
+
+        @keyframes floatAround {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, -30px) rotate(10deg); }
+            50% { transform: translate(-30px, -50px) rotate(-5deg); }
+            75% { transform: translate(30px, 20px) rotate(15deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 700px) {
+            .title { font-size: 1.5em; }
+            .theme-text { font-size: 1.3em; }
+            .visual-card { min-width: 100%; }
+            .big-number { font-size: 2em; }
+            .big-emoji { font-size: 2.8em; }
+            .answer-input { width: 80px; font-size: 1.3em; padding: 10px; }
+            .answer-dropdown { font-size: 1em; padding: 10px 12px; min-width: 140px; }
+            .answer-form { gap: 6px; }
+            .level-complete-message { font-size: 1.8em; }
+            .level-complete-card { padding: 30px 25px; }
+        }
+    </style>
+</head>
+<body class="bg-animals">
+    <div class="celebration" id="celebration"></div>
+    
+    <!-- Floating decorations -->
+    <div class="floating-deco" style="top: 10%; left: 5%;">🌟</div>
+    <div class="floating-deco" style="top: 60%; right: 5%; animation-delay: -5s;">✨</div>
+    <div class="floating-deco" style="bottom: 20%; left: 10%; animation-delay: -10s;">💫</div>
+
+    <div class="game-container">
+        <div class="header">
+            <div class="title" id="title">🌈 Kyla's Number Adventure! 🌈</div>
+            <div class="score-bar">
+                <div class="score-item">⭐ <span id="score">0</span> / <span id="needed">5</span></div>
+                <div class="score-item" id="streak-display" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Level Progress -->
+        <div class="level-progress-container">
+            <div class="level-header">
+                <div class="current-level" id="current-level">🎯 Level 1: Easy (1-100)</div>
+                <div class="progress-text" id="progress-text">Get 5 correct to pass!</div>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+                <div class="progress-bar-text" id="progress-bar-text">0 / 5</div>
+            </div>
+            <div class="level-selector" id="level-selector">
+                <!-- Level buttons rendered here -->
+            </div>
+        </div>
+
+        <div class="theme-banner">
+            <div class="theme-text" id="theme-text">🦒 Animal Heights</div>
+            <div class="instruction-text">Look at both pictures, then fill in your answer below!</div>
+        </div>
+
+        <!-- Visual display of the two items -->
+        <div class="visual-area" id="visual-area">
+            <!-- Cards rendered here -->
+        </div>
+
+        <!-- Answer section -->
+        <div class="answer-section">
+            <div class="answer-prompt">✏️ Complete the sentence:</div>
+            <div class="answer-form">
+                <input type="number" class="answer-input" id="input1" placeholder="?" autocomplete="off">
+                <select class="answer-dropdown" id="dropdown">
+                    <option value="">choose...</option>
+                </select>
+                <input type="number" class="answer-input" id="input2" placeholder="?" autocomplete="off">
+            </div>
+            <button class="submit-btn" id="submit-btn" onclick="checkAnswer()">Check My Answer! ✓</button>
+            
+            <div class="feedback-area" id="feedback">
+                <div class="feedback-emoji" id="feedback-emoji">🎉</div>
+                <div class="feedback-text" id="feedback-text">Amazing!</div>
+                <div class="feedback-detail" id="feedback-detail"></div>
+                <div class="correct-answer" id="correct-answer"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-next" onclick="nextRound()">Next Question ➡️</button>
+            <button class="btn btn-reset" onclick="resetProgress()">🔄 Reset All</button>
+        </div>
+    </div>
+
+    <!-- Level Complete Overlay -->
+    <div class="level-complete-overlay" id="level-complete-overlay">
+        <div class="level-complete-card">
+            <div class="level-complete-stars">🌟⭐🌟</div>
+            <div class="level-complete-message" id="level-complete-message">YOU'RE INCREDIBLE KYLA!</div>
+            <div class="level-complete-sub" id="level-complete-sub">Level 1 Complete!</div>
+            <button class="level-complete-btn" onclick="closeLevelComplete()">Continue! 🚀</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== LEVEL CONFIGURATION ====================
+        const levels = [
+            { 
+                id: 1, 
+                name: "Level 1: Easy", 
+                range: { min: 1, max: 100 }, 
+                needed: 5,
+                message: "YOU'RE INCREDIBLE KYLA!"
+            },
+            { 
+                id: 2, 
+                name: "Level 2: Medium", 
+                range: { min: 1, max: 500 }, 
+                needed: 6,
+                message: "AMAZING JOB KYLA!"
+            },
+            { 
+                id: 3, 
+                name: "Level 3: Getting Hard", 
+                range: { min: 1, max: 1000 }, 
+                needed: 7,
+                message: "YOUR EFFORT IS INCREDIBLE KYLA!"
+            },
+            { 
+                id: 4, 
+                name: "Level 4: Big Numbers", 
+                range: { min: 10, max: 2500 }, 
+                needed: 8,
+                message: "YOU'RE A SUPERSTAR KYLA!"
+            },
+            { 
+                id: 5, 
+                name: "Level 5: Bigger!", 
+                range: { min: 50, max: 5000 }, 
+                needed: 9,
+                message: "KYLA YOU'RE UNSTOPPABLE!"
+            },
+            { 
+                id: 6, 
+                name: "Level 6: Challenge", 
+                range: { min: 100, max: 7500 }, 
+                needed: 10,
+                message: "WOW KYLA, YOU'RE AMAZING!"
+            },
+            { 
+                id: 7, 
+                name: "Level 7: Expert", 
+                range: { min: 500, max: 10000 }, 
+                needed: 10,
+                message: "KYLA IS A NUMBER GENIUS!"
+            }
+        ];
+
+        // ==================== THEMES ====================
+        const themes = [
+            {
+                name: "🦒 Animal Heights",
+                category: "height",
+                bgClass: "bg-animals",
+                unit: "meters tall",
+                comparisons: { more: "is taller than", less: "is shorter than" },
+                items: [
+                    { name: "Giraffe", emoji: "🦒", typical: 5 },
+                    { name: "Elephant", emoji: "🐘", typical: 3 },
+                    { name: "T-Rex", emoji: "🦖", typical: 6 },
+                    { name: "Horse", emoji: "🐴", typical: 2 },
+                    { name: "Bear", emoji: "🐻", typical: 2 },
+                    { name: "Penguin", emoji: "🐧", typical: 1 }
+                ]
+            },
+            {
+                name: "🏗️ Building Heights",
+                category: "height",
+                bgClass: "bg-city",
+                unit: "meters tall",
+                comparisons: { more: "is taller than", less: "is shorter than" },
+                items: [
+                    { name: "Skyscraper", emoji: "🏙️", typical: 300 },
+                    { name: "House", emoji: "🏠", typical: 8 },
+                    { name: "Castle", emoji: "🏰", typical: 30 },
+                    { name: "Tree", emoji: "🌳", typical: 12 },
+                    { name: "Rocket", emoji: "🚀", typical: 60 }
+                ]
+            },
+            {
+                name: "🚀 Space Distances",
+                category: "distance",
+                bgClass: "bg-space",
+                unit: "meters away",
+                comparisons: { more: "is further than", less: "is closer than" },
+                items: [
+                    { name: "The Moon", emoji: "🌙", typical: 384400000 },
+                    { name: "A Star", emoji: "⭐", typical: 8000000000000 },
+                    { name: "The Sun", emoji: "☀️", typical: 150000000000 },
+                    { name: "A Satellite", emoji: "🛰️", typical: 35000000 },
+                    { name: "A Cloud", emoji: "☁️", typical: 2000 }
+                ]
+            },
+            {
+                name: "🗺️ Travel Distances",
+                category: "distance",
+                bgClass: "bg-ocean",
+                unit: "meters",
+                comparisons: { more: "is further than", less: "is closer than" },
+                items: [
+                    { name: "Across the ocean", emoji: "🌊", typical: 5600000 },
+                    { name: "To the park", emoji: "🌳", typical: 500 },
+                    { name: "To school", emoji: "🏫", typical: 800 },
+                    { name: "To grandma's", emoji: "👵", typical: 80000 },
+                    { name: "Across town", emoji: "🚗", typical: 16000 }
+                ]
+            },
+            {
+                name: "🍪 Cookie Jar",
+                category: "quantity",
+                bgClass: "bg-food",
+                unit: "cookies",
+                comparisons: { more: "is more than", less: "is less than" },
+                emoji: "🍪",
+                generateNumber: true
+            },
+            {
+                name: "⭐ Star Collection",
+                category: "quantity",
+                bgClass: "bg-space",
+                unit: "stars",
+                comparisons: { more: "is more than", less: "is less than" },
+                emoji: "⭐",
+                generateNumber: true
+            },
+            {
+                name: "🎈 Balloon Party",
+                category: "quantity",
+                bgClass: "bg-candy",
+                unit: "balloons",
+                comparisons: { more: "is more than", less: "is less than" },
+                emoji: "🎈",
+                generateNumber: true
+            },
+            {
+                name: "💎 Treasure Chest",
+                category: "quantity",
+                bgClass: "bg-ocean",
+                unit: "gems",
+                comparisons: { more: "is more than", less: "is less than" },
+                emoji: "💎",
+                generateNumber: true
+            },
+            {
+                name: "🦋 Butterfly Garden",
+                category: "quantity",
+                bgClass: "bg-animals",
+                unit: "butterflies",
+                comparisons: { more: "is more than", less: "is less than" },
+                emoji: "🦋",
+                generateNumber: true
+            },
+            {
+                name: "🍬 Candy Store",
+                category: "quantity",
+                bgClass: "bg-candy",
+                unit: "candies",
+                comparisons: { more: "is more than", less: "is less than" },
+                emoji: "🍬",
+                generateNumber: true
+            },
+            {
+                name: "🏎️ Speed Race",
+                category: "speed",
+                bgClass: "bg-vehicles",
+                unit: "km/h",
+                comparisons: { more: "is faster than", less: "is slower than" },
+                items: [
+                    { name: "Race Car", emoji: "🏎️", typical: 320 },
+                    { name: "Airplane", emoji: "✈️", typical: 900 },
+                    { name: "Bicycle", emoji: "🚲", typical: 25 },
+                    { name: "Train", emoji: "🚂", typical: 240 },
+                    { name: "Cheetah", emoji: "🐆", typical: 112 }
+                ]
+            },
+            {
+                name: "⚖️ How Heavy?",
+                category: "weight",
+                bgClass: "bg-animals",
+                unit: "kilograms",
+                comparisons: { more: "is heavier than", less: "is lighter than" },
+                items: [
+                    { name: "Elephant", emoji: "🐘", typical: 5400 },
+                    { name: "Car", emoji: "🚗", typical: 1500 },
+                    { name: "Dog", emoji: "🐕", typical: 25 },
+                    { name: "Apple", emoji: "🍎", typical: 0.2 },
+                    { name: "Piano", emoji: "🎹", typical: 230 }
+                ]
+            },
+            {
+                name: "🦕 How Old?",
+                category: "age",
+                bgClass: "bg-dinosaur",
+                unit: "years old",
+                comparisons: { more: "is older than", less: "is younger than" },
+                items: [
+                    { name: "Dinosaur fossil", emoji: "🦕", typical: 65000000 },
+                    { name: "Pyramid", emoji: "🔺", typical: 4500 },
+                    { name: "A tree", emoji: "🌳", typical: 100 },
+                    { name: "A butterfly", emoji: "🦋", typical: 1 }
+                ]
+            }
+        ];
+
+        // ==================== GAME STATE ====================
+        const state = {
+            currentLevel: 1,
+            levelProgress: 0,  // Correct answers in current level
+            completedLevels: [], // Array of completed level IDs
+            streak: 0,
+            currentTheme: null,
+            num1: 0,
+            num2: 0,
+            item1: null,
+            item2: null,
+            answered: false
+        };
+
+        // ==================== SAVE/LOAD ====================
+        function saveProgress() {
+            const data = {
+                currentLevel: state.currentLevel,
+                levelProgress: state.levelProgress,
+                completedLevels: state.completedLevels
+            };
+            localStorage.setItem('kylaNumberGame', JSON.stringify(data));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('kylaNumberGame');
+            if (saved) {
+                const data = JSON.parse(saved);
+                state.currentLevel = data.currentLevel || 1;
+                state.levelProgress = data.levelProgress || 0;
+                state.completedLevels = data.completedLevels || [];
+            }
+        }
+
+        // ==================== HELPERS ====================
+        function random(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000000) return (num / 1000000000).toFixed(1) + ' billion';
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + ' million';
+            if (num >= 1000) return num.toLocaleString();
+            if (num < 1 && num > 0) return num.toFixed(3);
+            return num.toString();
+        }
+
+        function pickRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function getCurrentLevel() {
+            return levels.find(l => l.id === state.currentLevel);
+        }
+
+        // ==================== UI UPDATES ====================
+        function updateLevelUI() {
+            const level = getCurrentLevel();
+            
+            document.getElementById('current-level').textContent = `🎯 ${level.name} (1-${level.range.max.toLocaleString()})`;
+            document.getElementById('progress-text').textContent = `Get ${level.needed} correct to pass!`;
+            document.getElementById('score').textContent = state.levelProgress;
+            document.getElementById('needed').textContent = level.needed;
+            
+            const percent = (state.levelProgress / level.needed) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('progress-bar-text').textContent = `${state.levelProgress} / ${level.needed}`;
+            
+            renderLevelButtons();
+        }
+
+        function renderLevelButtons() {
+            const container = document.getElementById('level-selector');
+            container.innerHTML = '';
+            
+            levels.forEach(level => {
+                const btn = document.createElement('button');
+                btn.className = 'level-btn';
+                btn.textContent = level.id;
+                
+                if (state.completedLevels.includes(level.id)) {
+                    btn.classList.add('completed');
+                    btn.innerHTML = '✓';
+                    btn.onclick = () => selectLevel(level.id);
+                } else if (level.id === state.currentLevel) {
+                    btn.classList.add('current');
+                    btn.onclick = () => selectLevel(level.id);
+                } else if (level.id === 1 || state.completedLevels.includes(level.id - 1)) {
+                    // Unlocked but not current
+                    btn.onclick = () => selectLevel(level.id);
+                } else {
+                    btn.classList.add('locked');
+                    btn.innerHTML = '🔒';
+                }
+                
+                container.appendChild(btn);
+            });
+        }
+
+        function selectLevel(levelId) {
+            // Can only select completed levels or the next unlocked one
+            const level = levels.find(l => l.id === levelId);
+            if (!level) return;
+            
+            if (levelId === 1 || state.completedLevels.includes(levelId) || state.completedLevels.includes(levelId - 1)) {
+                state.currentLevel = levelId;
+                if (!state.completedLevels.includes(levelId)) {
+                    state.levelProgress = 0;
+                }
+                saveProgress();
+                updateLevelUI();
+                nextRound();
+            }
+        }
+
+        // ==================== VISUALS ====================
+        function renderHeightVisual(num, item, maxVal) {
+            const maxHeight = 100;
+            const h = Math.max(25, (num / maxVal) * maxHeight);
+            const colors = ['#FF6B6B, #FF8E53', '#4ECDC4, #44A08D', '#667eea, #764ba2'];
+            const color = pickRandom(colors);
+            return `
+                <div class="height-visual">
+                    <div class="height-bar" style="height: ${h}px; background: linear-gradient(180deg, ${color});">
+                        ${item.emoji}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDistanceVisual(num, item, maxVal) {
+            const maxWidth = 70;
+            const w = Math.max(15, (num / maxVal) * maxWidth);
+            return `
+                <div class="distance-visual">
+                    <div class="distance-start">🏠</div>
+                    <div class="distance-path" style="width: ${w}%;"></div>
+                    <div class="distance-end" style="left: ${w + 8}%;">${item.emoji}</div>
+                </div>
+            `;
+        }
+
+        function renderQuantityVisual(num, emoji) {
+            const showMax = 35;
+            const showCount = Math.min(num, showMax);
+            let html = '<div class="stack-visual">';
+            for (let i = 0; i < showCount; i++) {
+                html += `<span class="stack-item" style="animation-delay: ${i * 0.02}s">${emoji}</span>`;
+            }
+            if (num > showMax) {
+                html += `<div class="more-indicator">+ ${(num - showMax).toLocaleString()} more!</div>`;
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function renderGenericVisual(item) {
+            return `<div style="text-align: center;"><div class="big-emoji">${item.emoji}</div></div>`;
+        }
+
+        // ==================== DROPDOWN ====================
+        function populateDropdown() {
+            const dropdown = document.getElementById('dropdown');
+            const comparisons = state.currentTheme.comparisons;
+            dropdown.innerHTML = `
+                <option value="">choose...</option>
+                <option value="more">${comparisons.more}</option>
+                <option value="less">${comparisons.less}</option>
+            `;
+        }
+
+        // ==================== GAME LOGIC ====================
+        function generateRound() {
+            state.answered = false;
+            state.currentTheme = pickRandom(themes);
+            const level = getCurrentLevel();
+
+            document.body.className = state.currentTheme.bgClass;
+            document.getElementById('theme-text').textContent = state.currentTheme.name;
+
+            const theme = state.currentTheme;
+
+            if (theme.generateNumber) {
+                state.num1 = random(level.range.min, level.range.max);
+                state.num2 = random(level.range.min, level.range.max);
+                while (state.num2 === state.num1) {
+                    state.num2 = random(level.range.min, level.range.max);
+                }
+                state.item1 = { name: theme.unit, emoji: theme.emoji };
+                state.item2 = { name: theme.unit, emoji: theme.emoji };
+            } else {
+                const items = [...theme.items];
+                state.item1 = pickRandom(items);
+                items.splice(items.indexOf(state.item1), 1);
+                state.item2 = pickRandom(items);
+                
+                const variance = 0.3;
+                state.num1 = Math.round(state.item1.typical * (1 + (Math.random() - 0.5) * variance));
+                state.num2 = Math.round(state.item2.typical * (1 + (Math.random() - 0.5) * variance));
+                if (state.num1 === state.num2) state.num2 += 1;
+            }
+
+            populateDropdown();
+
+            // Clear inputs
+            document.getElementById('input1').value = '';
+            document.getElementById('input2').value = '';
+            document.getElementById('dropdown').value = '';
+            document.getElementById('input1').className = 'answer-input';
+            document.getElementById('input2').className = 'answer-input';
+            document.getElementById('dropdown').className = 'answer-dropdown';
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('feedback').classList.remove('show');
+
+            renderVisuals();
+        }
+
+        function renderVisuals() {
+            const theme = state.currentTheme;
+            const maxVal = Math.max(state.num1, state.num2);
+            let visual1, visual2;
+
+            if (theme.category === 'height') {
+                visual1 = renderHeightVisual(state.num1, state.item1, maxVal);
+                visual2 = renderHeightVisual(state.num2, state.item2, maxVal);
+            } else if (theme.category === 'distance') {
+                visual1 = renderDistanceVisual(state.num1, state.item1, maxVal);
+                visual2 = renderDistanceVisual(state.num2, state.item2, maxVal);
+            } else if (theme.category === 'quantity') {
+                visual1 = renderQuantityVisual(state.num1, theme.emoji);
+                visual2 = renderQuantityVisual(state.num2, theme.emoji);
+            } else {
+                visual1 = renderGenericVisual(state.item1);
+                visual2 = renderGenericVisual(state.item2);
+            }
+
+            const label1 = theme.generateNumber ? `${formatNumber(state.num1)} ${theme.unit}` : state.item1.name;
+            const label2 = theme.generateNumber ? `${formatNumber(state.num2)} ${theme.unit}` : state.item2.name;
+
+            document.getElementById('visual-area').innerHTML = `
+                <div class="visual-card" id="card1">
+                    <div class="card-visual">${visual1}</div>
+                    <div class="number-display">
+                        <div class="big-number">${formatNumber(state.num1)}</div>
+                        <div class="number-label">${label1}</div>
+                    </div>
+                </div>
+                <div class="visual-card" id="card2">
+                    <div class="card-visual">${visual2}</div>
+                    <div class="number-display">
+                        <div class="big-number">${formatNumber(state.num2)}</div>
+                        <div class="number-label">${label2}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkAnswer() {
+            if (state.answered) return;
+
+            const input1Val = document.getElementById('input1').value.trim();
+            const input2Val = document.getElementById('input2').value.trim();
+            const dropdownVal = document.getElementById('dropdown').value;
+
+            if (!input1Val || !input2Val || !dropdownVal) {
+                alert('Please fill in all the fields! 📝');
+                return;
+            }
+
+            state.answered = true;
+            document.getElementById('submit-btn').disabled = true;
+
+            const userNum1 = parseFloat(input1Val);
+            const userNum2 = parseFloat(input2Val);
+            const userComparison = dropdownVal;
+
+            const biggerNum = Math.max(state.num1, state.num2);
+            const smallerNum = Math.min(state.num1, state.num2);
+
+            let isCorrect = false;
+            if (userComparison === 'more') {
+                isCorrect = (userNum1 === biggerNum && userNum2 === smallerNum);
+            } else if (userComparison === 'less') {
+                isCorrect = (userNum1 === smallerNum && userNum2 === biggerNum);
+            }
+
+            const validNumbers = (userNum1 === state.num1 || userNum1 === state.num2) &&
+                                 (userNum2 === state.num1 || userNum2 === state.num2) &&
+                                 (userNum1 !== userNum2);
+            isCorrect = isCorrect && validNumbers;
+
+            const input1El = document.getElementById('input1');
+            const input2El = document.getElementById('input2');
+            const dropdownEl = document.getElementById('dropdown');
+            const card1 = document.getElementById('card1');
+            const card2 = document.getElementById('card2');
+            const feedback = document.getElementById('feedback');
+            const feedbackEmoji = document.getElementById('feedback-emoji');
+            const feedbackText = document.getElementById('feedback-text');
+            const feedbackDetail = document.getElementById('feedback-detail');
+            const correctAnswer = document.getElementById('correct-answer');
+
+            const comparisons = state.currentTheme.comparisons;
+
+            if (isCorrect) {
+                state.levelProgress++;
+                state.streak++;
+                saveProgress();
+                updateLevelUI();
+
+                input1El.classList.add('correct');
+                input2El.classList.add('correct');
+                dropdownEl.classList.add('correct');
+
+                if (state.num1 > state.num2) {
+                    card1.classList.add('highlight-correct');
+                } else {
+                    card2.classList.add('highlight-correct');
+                }
+
+                const messages = [
+                    { emoji: '🎉', text: 'AMAZING!' },
+                    { emoji: '⭐', text: 'SUPER!' },
+                    { emoji: '🌟', text: 'FANTASTIC!' },
+                    { emoji: '💪', text: 'YOU GOT IT!' }
+                ];
+                const msg = pickRandom(messages);
+
+                feedbackEmoji.textContent = msg.emoji;
+                feedbackText.textContent = msg.text;
+                feedbackDetail.textContent = `${formatNumber(biggerNum)} ${comparisons.more} ${formatNumber(smallerNum)}!`;
+                correctAnswer.style.display = 'none';
+                feedback.className = 'feedback-area success show';
+
+                if (state.streak >= 3) {
+                    celebrate();
+                }
+
+                // Check if level completed
+                const level = getCurrentLevel();
+                if (state.levelProgress >= level.needed) {
+                    setTimeout(() => {
+                        showLevelComplete();
+                    }, 1200);
+                }
+            } else {
+                state.streak = 0;
+
+                input1El.classList.add('wrong');
+                input2El.classList.add('wrong');
+                dropdownEl.classList.add('wrong');
+
+                feedbackEmoji.textContent = '🤔';
+                feedbackText.textContent = 'Not quite!';
+                feedbackDetail.textContent = 'The correct answer is:';
+                correctAnswer.innerHTML = `<strong>${formatNumber(biggerNum)}</strong> ${comparisons.more} <strong>${formatNumber(smallerNum)}</strong>`;
+                correctAnswer.style.display = 'block';
+                feedback.className = 'feedback-area fail show';
+            }
+
+            updateStreakDisplay();
+        }
+
+        function updateStreakDisplay() {
+            const streakDisplay = document.getElementById('streak-display');
+            if (state.streak >= 3) {
+                streakDisplay.style.display = 'block';
+                streakDisplay.className = 'score-item streak-fire';
+                streakDisplay.innerHTML = `🔥 ${state.streak} in a row!`;
+            } else {
+                streakDisplay.style.display = 'none';
+            }
+        }
+
+        function showLevelComplete() {
+            const level = getCurrentLevel();
+            
+            // Mark level as completed
+            if (!state.completedLevels.includes(level.id)) {
+                state.completedLevels.push(level.id);
+            }
+            
+            // Move to next level if available
+            const nextLevel = levels.find(l => l.id === level.id + 1);
+            if (nextLevel) {
+                state.currentLevel = nextLevel.id;
+                state.levelProgress = 0;
+            }
+            
+            saveProgress();
+            
+            // Show overlay
+            document.getElementById('level-complete-message').textContent = level.message;
+            document.getElementById('level-complete-sub').textContent = `${level.name} Complete!`;
+            document.getElementById('level-complete-overlay').classList.add('show');
+            
+            // Big celebration!
+            celebrateBig();
+        }
+
+        function closeLevelComplete() {
+            document.getElementById('level-complete-overlay').classList.remove('show');
+            updateLevelUI();
+            nextRound();
+        }
+
+        function celebrate() {
+            const celebration = document.getElementById('celebration');
+            const emojis = ['🎉', '⭐', '🌟', '✨', '🎊', '💫'];
+            
+            for (let i = 0; i < 15; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.textContent = pickRandom(emojis);
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 0.3 + 's';
+                celebration.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3500);
+            }
+        }
+
+        function celebrateBig() {
+            const celebration = document.getElementById('celebration');
+            const emojis = ['🎉', '⭐', '🌟', '✨', '🎊', '💫', '🏆', '🎈', '🦋', '💎', '🌈', '👑'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.textContent = pickRandom(emojis);
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 1 + 's';
+                confetti.style.fontSize = (2 + Math.random() * 2) + 'em';
+                celebration.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+
+        function nextRound() {
+            generateRound();
+        }
+
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset ALL progress? This cannot be undone!')) {
+                state.currentLevel = 1;
+                state.levelProgress = 0;
+                state.completedLevels = [];
+                state.streak = 0;
+                saveProgress();
+                updateLevelUI();
+                updateStreakDisplay();
+                nextRound();
+            }
+        }
+
+        // Enter key to submit
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !state.answered) {
+                checkAnswer();
+            }
+        });
+
+        // ==================== INIT ====================
+        loadProgress();
+        updateLevelUI();
+        generateRound();
+    </script>
+</body>
+</html>
